@@ -16,6 +16,15 @@ func TestAccount_IsCodexCLIOnlyAppServerAllowed(t *testing.T) {
 		require.True(t, account.IsCodexCLIOnlyAppServerAllowed())
 	})
 
+	t.Run("API Key codex_cli_only 开 + allow_app_server=true → true", func(t *testing.T) {
+		account := &Account{
+			Platform: PlatformOpenAI,
+			Type:     AccountTypeAPIKey,
+			Extra:    map[string]any{"codex_cli_only": true, "codex_cli_only_allow_app_server": true},
+		}
+		require.True(t, account.IsCodexCLIOnlyAppServerAllowed())
+	})
+
 	t.Run("codex_cli_only 开 + allow_app_server=false → false", func(t *testing.T) {
 		account := &Account{
 			Platform: PlatformOpenAI,

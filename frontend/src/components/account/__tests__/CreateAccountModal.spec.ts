@@ -249,6 +249,30 @@ describe('CreateAccountModal OpenAI long-context billing', () => {
     expect(createAccountMock.mock.calls[0]?.[0]?.extra?.openai_long_context_billing_enabled).toBe(true)
   })
 
+  it('shows and submits the Codex client restriction for OpenAI API Key accounts', async () => {
+    const wrapper = mountModal()
+    await selectButtonByText(wrapper, 'OpenAI')
+    await selectButtonByText(wrapper, 'API Key')
+
+    const restrictionToggle = wrapper.get(
+      '[data-testid="create-openai-codex-cli-only-toggle"]'
+    )
+    expect(restrictionToggle.attributes('aria-checked')).toBe('false')
+    await restrictionToggle.trigger('click')
+    await wrapper.get('[data-testid="create-openai-codex-app-server-toggle"]').trigger('click')
+
+    await wrapper.get('form#create-account-form input[type="text"]').setValue('OpenAI Key')
+    await wrapper.get('form#create-account-form input[type="password"]').setValue('sk-test')
+    await wrapper.get('form#create-account-form').trigger('submit.prevent')
+    await flushPromises()
+
+    expect(createAccountMock).toHaveBeenCalledTimes(1)
+    expect(createAccountMock.mock.calls[0]?.[0]?.extra).toMatchObject({
+      codex_cli_only: true,
+      codex_cli_only_allow_app_server: true,
+    })
+  })
+
   it('omits the OpenAI setting for non-OpenAI account creation', async () => {
     await submitApiKeyAccount('anthropic')
 

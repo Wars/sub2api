@@ -2915,7 +2915,7 @@
         </div>
       </div>
 
-      <!-- OpenAI OAuth Codex 官方客户端限制开关 -->
+      <!-- OpenAI 长上下文计费开关 -->
       <div
         v-if="form.platform === 'openai' && (accountCategory === 'oauth-based' || accountCategory === 'apikey')"
         class="border-t border-gray-200 pt-4 dark:border-dark-600"
@@ -2948,8 +2948,9 @@
         </div>
       </div>
 
+      <!-- OpenAI OAuth/API Key Codex 官方客户端限制开关 -->
       <div
-        v-if="form.platform === 'openai' && accountCategory === 'oauth-based'"
+        v-if="form.platform === 'openai' && (accountCategory === 'oauth-based' || accountCategory === 'apikey')"
         class="border-t border-gray-200 pt-4 dark:border-dark-600"
       >
         <div class="flex items-center justify-between">
@@ -2961,6 +2962,9 @@
           </div>
           <button
             type="button"
+            data-testid="create-openai-codex-cli-only-toggle"
+            role="switch"
+            :aria-checked="codexCLIOnlyEnabled"
             @click="codexCLIOnlyEnabled = !codexCLIOnlyEnabled"
             :class="[
               'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
@@ -2987,6 +2991,9 @@
           </div>
           <button
             type="button"
+            data-testid="create-openai-codex-app-server-toggle"
+            role="switch"
+            :aria-checked="codexCLIOnlyAppServerEnabled"
             @click="codexCLIOnlyAppServerEnabled = !codexCLIOnlyAppServerEnabled"
             :class="[
               'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
@@ -4796,14 +4803,17 @@ const buildOpenAIExtra = (base?: Record<string, unknown>): Record<string, unknow
   }
   extra.openai_long_context_billing_enabled = openAILongContextBillingEnabled.value
 
-  if (accountCategory.value === 'oauth-based' && codexCLIOnlyEnabled.value) {
+  if (
+    (accountCategory.value === 'oauth-based' || accountCategory.value === 'apikey') &&
+    codexCLIOnlyEnabled.value
+  ) {
     extra.codex_cli_only = true
   } else {
     delete extra.codex_cli_only
   }
   delete extra.codex_cli_only_allowed_clients
   if (
-    accountCategory.value === 'oauth-based' &&
+    (accountCategory.value === 'oauth-based' || accountCategory.value === 'apikey') &&
     codexCLIOnlyEnabled.value &&
     codexCLIOnlyAppServerEnabled.value
   ) {

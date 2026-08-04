@@ -107,6 +107,20 @@ func TestOpenAICodexClientRestrictionDetector_Detect(t *testing.T) {
 		require.Equal(t, CodexClientRestrictionReasonNotMatchedUA, result.Reason)
 	})
 
+	t.Run("API Key 账号开启后非官方客户端拒绝", func(t *testing.T) {
+		detector := NewOpenAICodexClientRestrictionDetector(nil)
+		account := &Account{
+			Platform: PlatformOpenAI,
+			Type:     AccountTypeAPIKey,
+			Extra:    map[string]any{"codex_cli_only": true},
+		}
+
+		result := detector.Detect(newCodexDetectorTestContext("curl/8.0", "my_client"), account, CodexRestrictionPolicy{}, nil)
+		require.True(t, result.Enabled)
+		require.False(t, result.Matched)
+		require.Equal(t, CodexClientRestrictionReasonNotMatchedUA, result.Reason)
+	})
+
 	t.Run("开启 ForceCodexCLI 时允许通过", func(t *testing.T) {
 		detector := NewOpenAICodexClientRestrictionDetector(&config.Config{
 			Gateway: config.GatewayConfig{ForceCodexCLI: true},

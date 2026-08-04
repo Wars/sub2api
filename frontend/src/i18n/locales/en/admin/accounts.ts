@@ -558,7 +558,7 @@ export default {
         planTypeClear: 'Clear (auto-detect)',
         codexCLIOnly: 'Codex official clients only',
         codexCLIOnlyDesc:
-          'Only applies to OpenAI OAuth. When enabled, only Codex official client families are allowed; when disabled, the gateway bypasses this restriction and keeps existing behavior.',
+          'Only applies to OpenAI OAuth or API Key accounts. When enabled, only Codex official client families are allowed; when disabled, the gateway bypasses this restriction and keeps existing behavior.',
         codexCLIOnlyAppServer: 'Allow Codex app-server clients',
         codexCLIOnlyAppServerDesc:
           "Effective only when the switch above is on. When enabled, this account also allows third-party clients that embed the Codex engine over the app-server protocol (e.g. Claude Code's codex plugin); they still pass the global engine-fingerprint gate. OR-combined with the global app-server toggle.",

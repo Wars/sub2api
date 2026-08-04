@@ -416,6 +416,34 @@ describe('EditAccountModal', () => {
     expect(updateAccountMock.mock.calls[0]?.[1]?.extra?.openai_long_context_billing_enabled).toBe(false)
   })
 
+  it('loads and submits the Codex client restriction for OpenAI API Key accounts', async () => {
+    const account = buildAccount()
+    account.extra = {
+      codex_cli_only: true,
+      codex_cli_only_allow_app_server: true
+    }
+    updateAccountMock.mockReset()
+    checkMixedChannelRiskMock.mockReset()
+    checkMixedChannelRiskMock.mockResolvedValue({ has_risk: false })
+    updateAccountMock.mockResolvedValue(account)
+
+    const wrapper = mountModal(account)
+    expect(
+      wrapper.get('[data-testid="edit-openai-codex-cli-only-toggle"]').attributes('aria-checked')
+    ).toBe('true')
+    expect(
+      wrapper.get('[data-testid="edit-openai-codex-app-server-toggle"]').attributes('aria-checked')
+    ).toBe('true')
+
+    await wrapper.get('form#edit-account-form').trigger('submit.prevent')
+
+    expect(updateAccountMock).toHaveBeenCalledTimes(1)
+    expect(updateAccountMock.mock.calls[0]?.[1]?.extra).toMatchObject({
+      codex_cli_only: true,
+      codex_cli_only_allow_app_server: true
+    })
+  })
+
   it('loads and clears the OAuth-only Codex namespace flatten toggle', async () => {
     const account = buildAccount()
     account.type = 'oauth'

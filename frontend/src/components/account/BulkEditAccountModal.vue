@@ -825,8 +825,8 @@
         </div>
       </div>
 
-      <!-- OpenAI OAuth Codex CLI only -->
-      <div v-if="allOpenAIOAuth" class="border-t border-gray-200 pt-4 dark:border-dark-600">
+      <!-- OpenAI OAuth/API Key Codex CLI only -->
+      <div v-if="allOpenAICodexRestrictionCapable" class="border-t border-gray-200 pt-4 dark:border-dark-600">
         <div class="mb-3 flex items-center justify-between">
           <label
             id="bulk-edit-openai-codex-cli-only-label"
@@ -869,8 +869,8 @@
         </div>
       </div>
 
-      <!-- OpenAI OAuth: Codex app-server -->
-      <div v-if="allOpenAIOAuth" class="border-t border-gray-200 pt-4 dark:border-dark-600">
+      <!-- OpenAI OAuth/API Key: Codex app-server -->
+      <div v-if="allOpenAICodexRestrictionCapable" class="border-t border-gray-200 pt-4 dark:border-dark-600">
         <div class="mb-3 flex items-center justify-between">
           <label
             id="bulk-edit-openai-codex-app-server-label"
@@ -1387,6 +1387,15 @@ const allOpenAIOAuth = computed(() => {
     targetSelectedPlatforms.value[0] === 'openai' &&
     targetSelectedTypes.value.length > 0 &&
     targetSelectedTypes.value.every(t => t === 'oauth' || t === 'setup-token')
+  )
+})
+
+const allOpenAICodexRestrictionCapable = computed(() => {
+  return (
+    targetSelectedPlatforms.value.length === 1 &&
+    targetSelectedPlatforms.value[0] === 'openai' &&
+    targetSelectedTypes.value.length > 0 &&
+    targetSelectedTypes.value.every(t => t === 'oauth' || t === 'setup-token' || t === 'apikey')
   )
 })
 
